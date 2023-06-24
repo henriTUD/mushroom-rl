@@ -1,6 +1,6 @@
 import numpy as np
 from enum import Enum
-
+import inspect
 
 class ObservationType(Enum):
     """
@@ -15,7 +15,7 @@ class ObservationType(Enum):
         SITE_POS: (3,) x, y, z position of the body
         SITE_ROT: (9,) rotation matrix of the site
     """
-    __order__ = "BODY_POS BODY_ROT BODY_VEL JOINT_POS JOINT_VEL SITE_POS SITE_ROT"
+    __order__ = "BODY_POS BODY_ROT BODY_VEL JOINT_POS JOINT_VEL SITE_POS SITE_ROT MUSCLE_LEN MUSCLE_VEL MUSCLE_FORCE"
     BODY_POS = 0
     BODY_ROT = 1
     BODY_VEL = 2
@@ -23,6 +23,9 @@ class ObservationType(Enum):
     JOINT_VEL = 4
     SITE_POS = 5
     SITE_ROT = 6
+    MUSCLE_LEN = 7
+    MUSCLE_VEL = 8
+    MUSCLE_FORCE = 9
 
 
 class ObservationHelper:
@@ -43,6 +46,7 @@ class ObservationHelper:
 
         self.observation_spec = observation_spec
         current_idx = 0
+
         for key, name, ot in observation_spec:
             assert key not in self.obs_idx_map.keys(), "Found duplicate key in observation specification: \"%s\"" % key
             obs_count = len(self.get_state(data, name, ot))
@@ -62,6 +66,9 @@ class ObservationHelper:
                 self.joint_vel_idx.append(current_idx)
                 self.obs_low.append(-max_joint_velocity)
                 self.obs_high.append(max_joint_velocity)
+            elif obs_count == 1 and ot == ObservationType.MUSCLE_LEN:
+                self.obs_low.append(model.actuator(name).lengthrange[0])
+                self.obs_high.append(model.actuator(name).lengthrange[1])
             else:
                 self.obs_low.extend([-np.inf] * obs_count)
                 self.obs_high.extend([np.inf] * obs_count)
@@ -161,6 +168,8 @@ class ObservationHelper:
         Get a single observation from data, given it's name and observation type. The ObservationType documentation
         describes the different returns in detail
         """
+
+        #print(data.actuator_length)
         if o_type == ObservationType.BODY_POS:
             obs = data.body(name).xpos
         elif o_type == ObservationType.BODY_ROT:
@@ -177,6 +186,12 @@ class ObservationHelper:
             # Sites don't have rotation quaternion for some reason...
             # x_mat is rotation matrix with shape (9,)
             obs = data.site(name).xmat
+        elif o_type == ObservationType.MUSCLE_LEN:
+            obs = data.actuator(name).length
+        elif o_type == ObservationType.MUSCLE_VEL:
+            obs = data.actuator(name).velocity
+        elif o_type == ObservationType.MUSCLE_FORCE:
+            obs = data.actuator(name).force
         else:
             raise ValueError('Invalid observation type')
 
@@ -184,3 +199,4 @@ class ObservationHelper:
 
     def get_all_observation_keys(self):
         return list(self.obs_idx_map.keys())
+

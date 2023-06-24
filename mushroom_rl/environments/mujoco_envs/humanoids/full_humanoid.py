@@ -20,7 +20,7 @@ class FullHumanoid(BaseHumanoid):
     Mujoco simulation of full humanoid with muscle-actuated lower limb and torque-actuated upper body.
 
     """
-    def __init__(self, use_brick_foots=False, disable_arms=False, tmp_dir_name=None, **kwargs):
+    def __init__(self, obs_muscle_lens=False, obs_muscle_vels=False, obs_muscle_forces=False, use_brick_foots=False, disable_arms=False, tmp_dir_name=None, **kwargs):
         """
         Constructor.
 
@@ -163,6 +163,8 @@ class FullHumanoid(BaseHumanoid):
                             ("dq_wrist_flex_l", "wrist_flex_l", ObservationType.JOINT_VEL),
                             ("dq_wrist_dev_l", "wrist_dev_l", ObservationType.JOINT_VEL)]
 
+        observation_spec.extend(self.build_muscle_observation_spec(obs_muscle_lens, obs_muscle_vels, obs_muscle_forces))
+
         collision_groups = [("floor", ["floor"]),
                             ("foot_r", ["r_foot"]),
                             ("front_foot_r", ["r_bofoot"]),
@@ -208,6 +210,40 @@ class FullHumanoid(BaseHumanoid):
             xml_path = self.save_xml_handle(xml_handle, tmp_dir_name)
 
         super().__init__(xml_path, action_spec, observation_spec, collision_groups, **kwargs)
+
+    def build_muscle_observation_spec(self, use_muscle_lens, use_muscle_vels, use_muscle_forces):
+        muscle_obs_spec = []
+
+        muscles = [
+            "addbrev_r", "addlong_r", "addmagDist_r", "addmagIsch_r", "addmagMid_r", "addmagProx_r",
+            "bflh_r", "bfsh_r", "edl_r", "ehl_r", "fdl_r", "fhl_r", "gaslat_r", "gasmed_r", "glmax1_r",
+            "glmax2_r", "glmax3_r", "glmed1_r", "glmed2_r", "glmed3_r", "glmin1_r", "glmin2_r",
+            "glmin3_r", "grac_r", "iliacus_r", "perbrev_r", "perlong_r", "piri_r", "psoas_r", "recfem_r",
+            "sart_r", "semimem_r", "semiten_r", "soleus_r", "tfl_r", "tibant_r", "tibpost_r", "vasint_r",
+            "vaslat_r", "vasmed_r", "addbrev_l", "addlong_l", "addmagDist_l", "addmagIsch_l", "addmagMid_l",
+            "addmagProx_l", "bflh_l", "bfsh_l", "edl_l", "ehl_l", "fdl_l", "fhl_l", "gaslat_l", "gasmed_l",
+            "glmax1_l", "glmax2_l", "glmax3_l", "glmed1_l", "glmed2_l", "glmed3_l", "glmin1_l", "glmin2_l",
+            "glmin3_l", "grac_l", "iliacus_l", "perbrev_l", "perlong_l", "piri_l", "psoas_l", "recfem_l",
+            "sart_l", "semimem_l", "semiten_l", "soleus_l", "tfl_l", "tibant_l", "tibpost_l", "vasint_l",
+            "vaslat_l", "vasmed_l"]
+
+        if use_muscle_lens:
+            muscle_len_obs = []
+            for muscle in muscles:
+                muscle_len_obs.append(('len_' + muscle, muscle, ObservationType.MUSCLE_LEN))
+            muscle_obs_spec.extend(muscle_len_obs)
+        if use_muscle_vels:
+            muscle_vel_obs = []
+            for muscle in muscles:
+                muscle_vel_obs.append(('vel_' + muscle, muscle, ObservationType.MUSCLE_VEL))
+            muscle_obs_spec.extend(muscle_vel_obs)
+        if use_muscle_forces:
+            muscle_force_obs = []
+            for muscle in muscles:
+                muscle_force_obs.append(('force_' + muscle, muscle, ObservationType.MUSCLE_FORCE))
+            muscle_obs_spec.extend(muscle_force_obs)
+
+        return muscle_obs_spec
 
     def delete_from_xml_handle(self, xml_handle, joints_to_remove, actuators_to_remove, equ_constraints):
 
@@ -281,6 +317,12 @@ if __name__ == '__main__':
     import time
 
     env = FullHumanoid(n_substeps=33, use_brick_foots=False, disable_arms=True, random_start=False, tmp_dir_name="test")
+    print(env._n_intermediate_steps)
+    print(env.get_obs_idx('q_pelvis_tilt'))
+    print(env.get_obs_idx('q_hip_flexion_r'))
+    print(env.get_obs_idx('dq_hip_flexion_r'))
+    print(env.get_obs_idx('q_hip_flexion_l'))
+    print(env.get_obs_idx('dq_hip_flexion_l'))
 
     action_dim = env.info.action_space.shape[0]
 
@@ -293,10 +335,14 @@ if __name__ == '__main__':
     psi = np.zeros_like(frequencies)
     dt = 0.01
 
+    ind = 0
     while True:
+        ind += 1
+        print(ind)
         psi = psi + dt * frequencies
         action = np.sin(psi)
         #action = np.random.normal(1.0, 0.5, (action_dim,)) # compare to normal gaussian noise
         nstate, _, absorbing, _ = env.step(action)
 
         env.render()
+

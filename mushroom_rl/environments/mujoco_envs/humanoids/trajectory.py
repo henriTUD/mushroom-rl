@@ -33,7 +33,8 @@ class Trajectory(object):
     the desired cycle.
 
     """
-    def __init__(self, keys, traj_path, low, high, joint_pos_idx, traj_dt=0.002, control_dt=0.01, ignore_keys=[]):
+    def __init__(self, keys, traj_path, low, high, joint_pos_idx, traj_dt=0.002, control_dt=0.01, ignore_keys=[],
+                 start_state_percentage=1.0):
         """
         Constructor.
 
@@ -94,6 +95,7 @@ class Trajectory(object):
         self.subtraj_step_no = 0
         self.x_dist = 0
         self.subtraj = self.trajectory.copy()
+        self.start_state_percentage = start_state_percentage
 
     @property
     def traj_length(self):
@@ -182,8 +184,7 @@ class Trajectory(object):
         """
         self.x_dist = 0
         if substep_no is None:
-            self.subtraj_step_no = int(np.random.rand() * (
-                    self.traj_length))
+            self.subtraj_step_no = int(np.random.rand() * (self.traj_length * self.start_state_percentage))
         else:
             self.subtraj_step_no = substep_no
 

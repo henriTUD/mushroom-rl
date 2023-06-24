@@ -90,7 +90,9 @@ class BaseHumanoid(MuJoCo):
         self._init_step_no = init_step_no
 
     def load_trajectory(self, traj_params):
-        self.trajectory = Trajectory(keys=self.get_all_observation_keys(),
+        obs_keys = self.get_all_observation_keys()
+        mocap_keys = [key for key in obs_keys if key.startswith('q_') or key.startswith('dq_')]
+        self.trajectory = Trajectory(keys=mocap_keys,
                                      low=self.info.observation_space.low,
                                      high=self.info.observation_space.high,
                                      joint_pos_idx=self.obs_helper.joint_pos_idx,
@@ -278,9 +280,10 @@ class BaseHumanoid(MuJoCo):
 
     def set_qpos_qvel(self, sample):
         obs_spec = self.obs_helper.observation_spec
-        assert len(sample) == len(obs_spec)
+        mocap_spec = [key for key in obs_spec if key[0].startswith('q_') or key[0].startswith('dq_')]
+        assert len(sample) == len(mocap_spec)
 
-        for key_name_ot, value in zip(obs_spec, sample):
+        for key_name_ot, value in zip(mocap_spec, sample):
             key, name, ot = key_name_ot
             if ot == ObservationType.JOINT_POS:
                 self._data.joint(name).qpos = value
