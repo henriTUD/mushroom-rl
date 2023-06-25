@@ -75,11 +75,12 @@ class BaseHumanoid(MuJoCo):
         self.info.action_space.high[:] = 1.0
 
         # mask to get kinematic observations (-2 for neglecting x and z)
-        self._kinematic_obs_mask = np.arange(len(observation_spec) - 2)
+        mocap_spec = [key for key in observation_spec if key[0].startswith('q_') or key[0].startswith('dq_')]
+        self._kinematic_obs_mask = np.arange(len(mocap_spec) - 2)
 
         # setup a running average window for the mean ground forces
         self.mean_grf = RunningAveragedWindow(shape=(12,),
-                                              window_size=n_substeps)
+                                              window_size=1)
 
         if traj_params:
             self.load_trajectory(traj_params)
