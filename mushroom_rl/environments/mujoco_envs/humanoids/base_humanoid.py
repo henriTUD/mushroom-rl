@@ -80,7 +80,7 @@ class BaseHumanoid(MuJoCo):
 
         # setup a running average window for the mean ground forces
         self.mean_grf = RunningAveragedWindow(shape=(12,),
-                                              window_size=1)
+                                              window_size=5)
 
         if traj_params:
             self.load_trajectory(traj_params)

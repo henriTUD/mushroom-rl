@@ -69,6 +69,12 @@ class ObservationHelper:
             elif obs_count == 1 and ot == ObservationType.MUSCLE_LEN:
                 self.obs_low.append(model.actuator(name).lengthrange[0])
                 self.obs_high.append(model.actuator(name).lengthrange[1])
+            elif obs_count == 1 and ot == ObservationType.MUSCLE_FORCE:
+                assert model.actuator(name).gainprm[2] <= 0
+                acc0 = model.actuator(name).acc0
+                scale = model.actuator(name).gainprm[3]
+                self.obs_low.append(-1 * scale/acc0)
+                self.obs_high.append(0)
             else:
                 self.obs_low.extend([-np.inf] * obs_count)
                 self.obs_high.extend([np.inf] * obs_count)
