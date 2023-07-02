@@ -8,7 +8,6 @@ __pycache__/
 .idea/
 *.pyc
 *.pyd
-*.xml
 logs/
 *.h5
 .pytest_cache

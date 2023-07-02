@@ -20,7 +20,8 @@ class FullHumanoid(BaseHumanoid):
     Mujoco simulation of full humanoid with muscle-actuated lower limb and torque-actuated upper body.
 
     """
-    def __init__(self, obs_muscle_lens=False, obs_muscle_vels=False, obs_muscle_forces=False, use_brick_foots=False, disable_arms=False, tmp_dir_name=None, **kwargs):
+    def __init__(self, obs_muscle_lens=False, obs_muscle_vels=False, obs_muscle_forces=False, use_brick_foots=False, disable_arms=False, tmp_dir_name=None,
+                 xml_file_name='full_humanoid.xml', **kwargs):
         """
         Constructor.
 
@@ -28,7 +29,7 @@ class FullHumanoid(BaseHumanoid):
         if use_brick_foots:
             assert tmp_dir_name is not None, "If you want to use brick foots or disable the arms, you have to specify a" \
                                              "directory name for the xml-files to be saved."
-        xml_path = (Path(__file__).resolve().parent.parent / "data" / "full_humanoid" / "full_humanoid.xml").as_posix()
+        xml_path = (Path(__file__).resolve().parent.parent / "data" / "full_humanoid" / xml_file_name).as_posix()
 
         action_spec = [# motors
                        "lumbar_ext", "lumbar_bend", "lumbar_rot", "shoulder_flex_r", "shoulder_add_r", "shoulder_rot_r",

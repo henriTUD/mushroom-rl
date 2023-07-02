@@ -1,29 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mujoco model="FullBodyModel_MuscleActuatedLowerLimb_TorqueActuatedUpperBody">
-  <compiler inertiafromgeom="auto" angle="radian" balanceinertia="true" boundmass="0.001" boundinertia="0.001"></compiler>
-<!--  <size njmax="8000" nconmax="4000"/>-->
+  <compiler inertiafromgeom="auto" angle="radian" balanceinertia="true" boundmass="0.001" boundinertia="0.001">
+    <lengthrange inttotal="50" useexisting="true"></lengthrange>
+  </compiler>
   <default>
-    <joint limited="true" damping="0.01" armature="0.01" stiffness="0"></joint>
-    <geom contype="1" conaffinity="1" condim="3" rgba="0.8 0.6 .4 1" margin="0.001" solref=".02 1" solimp=".8 .8 .01" material="geom"></geom>
+    <joint limited="true" damping="0.5" armature="0.1" stiffness="2"></joint>
+    <geom rgba="0.8 0.6 .4 1" margin="0.001"></geom>
     <site size="0.001"></site>
     <tendon width="0.001" rgba=".95 .3 .3 1" limited="false"></tendon>
-    <muscle scale="200" ctrllimited="true" range="0.5 1.4" lmin="0.3" lmax="2.0"></muscle>
+    <muscle scale="200" ctrllimited="true"></muscle>
     <motor ctrlrange="-1.0 1.0" ctrllimited="true"></motor>
   </default>
-  <option  integrator="RK4" iterations="50" solver="Newton"  timestep="0.001">
-    <flag energy="enable"></flag>
-  </option>
+  <option timestep="0.002"></option>
   <size njmax="1000" nconmax="400" nuser_jnt="1"></size>
-  <visual>
-    <map fogstart="3" fogend="5" force="0.1"></map>
-    <quality shadowsize="2048"></quality>
-  </visual>
   <worldbody>
-    <geom name="floor" pos="0 0 0" size="100 100 0.125" type="plane" material="MatPlane" condim="3" rgba="0.8 0.9 0.8 1" friction="1 .1 .1"></geom>
+    <geom name="floor" pos="0 0 0" size="10 10 0.125" type="plane" material="MatPlane" condim="3"></geom>
     <light cutoff="100" diffuse="1 1 1" dir="-0 0 -1.3" directional="true" exponent="1" pos="0 0 1.3" specular=".1 .1 .1" castshadow="false"/>
-    <body name="pelvis" pos="       0        0        0.95" quat="0.7071067811865475 0.7071067811865475 0.0 0.0">
-      <camera name="track" mode="trackcom" pos="0 0 3" xyaxes="1 0 0 0 1 0"/>
-<!--      <light cutoff="100" diffuse="1 1 1" dir="-0 0 -1.3" directional="true" exponent="1" pos="0 0 1.3" specular=".1 .1 .1"/>-->
+    <body name="pelvis" pos="       0 6.73556e-17      0.95" quat="0.7071067811865475 0.7071067811865475 0.0 0.0">
       <geom name="r_pelvis" type="mesh" mesh="r_pelvis"></geom>
       <geom name="l_pelvis" type="mesh" mesh="l_pelvis"></geom>
       <geom name="sacrum" type="mesh" mesh="sacrum"></geom>
@@ -90,12 +83,12 @@
       <site name="semimem_l-P1" pos="-0.0987 -0.114 -0.0614"></site>
       <site name="semiten_l-P1" pos="-0.1038 -0.1253 -0.0515"></site>
       <site name="tfl_l-P1" pos="-0.0311 0.0214 -0.1241"></site>
-      <joint name="pelvis_tx" type="slide" pos="0 0 0" axis="       1        0        0" limited="false" range="-500 500" ref="0" armature="0" damping="0.0" stiffness="0"></joint>
-      <joint name="pelvis_tz" type="slide" pos="0 0 0" axis="       0        0        1" limited="false" range="-300 300" ref="0" armature="0" damping="0.0" stiffness="0"></joint>
-      <joint name="pelvis_ty" type="slide" pos="0 0 0" axis="       0        1        0" limited="false" range="-100 200" ref="0" armature="0" damping="0.0" stiffness="0"></joint>
-      <joint name="pelvis_tilt" type="hinge" pos="0 0 0" axis="       0        0        1" limited="false" range=" -1.5708   1.5708" ref="0" armature="0" damping="0.0" stiffness="0"></joint>
-      <joint name="pelvis_list" type="hinge" pos="0 0 0" axis="       1        0        0" limited="false" range=" -1.5708   1.5708" ref="0" armature="0" damping="0.0" stiffness="0"></joint>
-      <joint name="pelvis_rotation" type="hinge" pos="0 0 0" axis="       0        1        0" limited="false" range=" -1.5708   1.5708" ref="0" armature="0" damping="0.0" stiffness="0"></joint>
+      <joint name="pelvis_tz" type="slide" pos="0 0 0" axis="       0        0        1" limited="true" range="      -3        3" ref="0" armature="0" damping="0" stiffness="0"></joint>
+      <joint name="pelvis_ty" type="slide" pos="0 0 0" axis="       0        1        0" limited="true" range="      -1        2" ref="0" armature="0" damping="0" stiffness="0"></joint>
+      <joint name="pelvis_tx" type="slide" pos="0 0 0" axis="       1        0        0" limited="true" range="      -5        5" ref="0" armature="0" damping="0" stiffness="0"></joint>
+      <joint name="pelvis_tilt" type="hinge" pos="0 0 0" axis="       0        0        1" limited="true" range=" -1.5708   1.5708" ref="0" armature="0" damping="0" stiffness="0"></joint>
+      <joint name="pelvis_list" type="hinge" pos="0 0 0" axis="       1        0        0" limited="true" range=" -1.5708   1.5708" ref="0" armature="0" damping="0" stiffness="0"></joint>
+      <joint name="pelvis_rotation" type="hinge" pos="0 0 0" axis="       0        1        0" limited="true" range=" -1.5708   1.5708" ref="0" armature="0" damping="0" stiffness="0"></joint>
       <body name="femur_r" pos="-0.056276 -0.07849  0.07726" quat="1.0 0.0 0.0 0.0">
         <geom name="r_femur" type="mesh" mesh="r_femur"></geom>
         <inertial pos="       0    -0.17        0" mass="9.3014" fullinertia="  0.1339   0.0351   0.1412        0        0        0"></inertial>
@@ -287,8 +280,8 @@
         <site name="vasmed_l-P1" pos="0.014 -0.2099 -0.0188"></site>
         <site name="vasmed_l-P2" pos="0.0356 -0.2769 -0.0009"></site>
         <joint name="hip_flexion_l" type="hinge" pos="0 0 0" axis="       0        0        1" limited="true" range="-0.523599   2.0944" ref="0"></joint>
-        <joint name="hip_adduction_l" type="hinge" pos="0 0 0" axis="       1        0        0" limited="true" range="-0.872665 0.523599" ref="0"></joint>
-        <joint name="hip_rotation_l" type="hinge" pos="0 0 0" axis="       0        1        0" limited="true" range="-0.698132 0.698132" ref="0"></joint>
+        <joint name="hip_adduction_l" type="hinge" pos="0 0 0" axis="      -1       -0       -0" limited="true" range="-0.872665 0.523599" ref="0"></joint>
+        <joint name="hip_rotation_l" type="hinge" pos="0 0 0" axis="      -0       -1       -0" limited="true" range="-0.698132 0.698132" ref="0"></joint>
         <body name="tibia_l" pos="-4.6e-07 -0.404425 0.00126526" quat="1.0 -7.240636975890137e-18 9.456205735995121e-17 -2.960068750797159e-20">
           <geom name="l_tibia" type="mesh" mesh="l_tibia"></geom>
           <geom name="l_fibula" type="mesh" mesh="l_fibula"></geom>
@@ -509,130 +502,128 @@
         </body>
       </body>
     </body>
+    <camera name="for_testing" pos="0 0 0" euler="0 0 0"></camera>
   </worldbody>
   <asset>
-    <mesh name="r_pelvis" file="meshes/r_pelvis.stl" scale="       1        1        1"></mesh>
-    <mesh name="l_pelvis" file="meshes/l_pelvis.stl" scale="       1        1        1"></mesh>
-    <mesh name="sacrum" file="meshes/sacrum.stl" scale="       1        1        1"></mesh>
-    <mesh name="r_femur" file="meshes/r_femur.stl" scale="       1        1        1"></mesh>
-    <mesh name="r_tibia" file="meshes/r_tibia.stl" scale="       1        1        1"></mesh>
-    <mesh name="r_fibula" file="meshes/r_fibula.stl" scale="       1        1        1"></mesh>
-    <mesh name="r_talus" file="meshes/r_talus.stl" scale="       1        1        1"></mesh>
-    <mesh name="r_foot" file="meshes/r_foot.stl" scale="       1        1        1"></mesh>
-    <mesh name="r_bofoot" file="meshes/r_bofoot.stl" scale="       1        1        1"></mesh>
-    <mesh name="r_patella" file="meshes/r_patella.stl" scale="       1        1        1"></mesh>
-    <mesh name="l_femur" file="meshes/l_femur.stl" scale="       1        1        1"></mesh>
-    <mesh name="l_tibia" file="meshes/l_tibia.stl" scale="       1        1        1"></mesh>
-    <mesh name="l_fibula" file="meshes/l_fibula.stl" scale="       1        1        1"></mesh>
-    <mesh name="l_talus" file="meshes/l_talus.stl" scale="       1        1        1"></mesh>
-    <mesh name="l_foot" file="meshes/l_foot.stl" scale="       1        1        1"></mesh>
-    <mesh name="l_bofoot" file="meshes/l_bofoot.stl" scale="       1        1        1"></mesh>
-    <mesh name="l_patella" file="meshes/l_patella.stl" scale="       1        1        1"></mesh>
-    <mesh name="hat_spine" file="meshes/hat_spine.stl" scale="       1        1        1"></mesh>
-    <mesh name="hat_jaw" file="meshes/hat_jaw.stl" scale="       1        1        1"></mesh>
-    <mesh name="hat_skull" file="meshes/hat_skull.stl" scale="       1        1        1"></mesh>
-    <mesh name="hat_ribs_scap" file="meshes/hat_ribs_scap.stl" scale="       1        1        1"></mesh>
-    <mesh name="humerus_rv" file="meshes/humerus_rv.stl" scale="       1        1        1"></mesh>
-    <mesh name="ulna_rv" file="meshes/ulna_rv.stl" scale="       1        1        1"></mesh>
-    <mesh name="radius_rv" file="meshes/radius_rv.stl" scale="       1        1        1"></mesh>
-    <mesh name="pisiform_rvs" file="meshes/pisiform_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="lunate_rvs" file="meshes/lunate_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="scaphoid_rvs" file="meshes/scaphoid_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="triquetrum_rvs" file="meshes/triquetrum_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="hamate_rvs" file="meshes/hamate_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="capitate_rvs" file="meshes/capitate_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="trapezoid_rvs" file="meshes/trapezoid_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="trapezium_rvs" file="meshes/trapezium_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="metacarpal2_rvs" file="meshes/metacarpal2_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="index_proximal_rvs" file="meshes/index_proximal_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="index_medial_rvs" file="meshes/index_medial_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="index_distal_rvs" file="meshes/index_distal_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="metacarpal3_rvs" file="meshes/metacarpal3_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="middle_proximal_rvs" file="meshes/middle_proximal_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="middle_medial_rvs" file="meshes/middle_medial_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="middle_distal_rvs" file="meshes/middle_distal_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="metacarpal4_rvs" file="meshes/metacarpal4_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="ring_proximal_rvs" file="meshes/ring_proximal_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="ring_medial_rvs" file="meshes/ring_medial_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="ring_distal_rvs" file="meshes/ring_distal_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="metacarpal5_rvs" file="meshes/metacarpal5_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="little_proximal_rvs" file="meshes/little_proximal_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="little_medial_rvs" file="meshes/little_medial_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="little_distal_rvs" file="meshes/little_distal_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="metacarpal1_rvs" file="meshes/metacarpal1_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="thumb_proximal_rvs" file="meshes/thumb_proximal_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="thumb_distal_rvs" file="meshes/thumb_distal_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="humerus_lv" file="meshes/humerus_lv.stl" scale="       1        1        1"></mesh>
-    <mesh name="ulna_lv" file="meshes/ulna_lv.stl" scale="       1        1        1"></mesh>
-    <mesh name="radius_lv" file="meshes/radius_lv.stl" scale="       1        1        1"></mesh>
-    <mesh name="pisiform_lvs" file="meshes/pisiform_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="lunate_lvs" file="meshes/lunate_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="scaphoid_lvs" file="meshes/scaphoid_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="triquetrum_lvs" file="meshes/triquetrum_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="hamate_lvs" file="meshes/hamate_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="capitate_lvs" file="meshes/capitate_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="trapezoid_lvs" file="meshes/trapezoid_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="trapezium_lvs" file="meshes/trapezium_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="metacarpal2_lvs" file="meshes/metacarpal2_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="index_proximal_lvs" file="meshes/index_proximal_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="index_medial_lvs" file="meshes/index_medial_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="index_distal_lvs" file="meshes/index_distal_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="metacarpal3_lvs" file="meshes/metacarpal3_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="middle_proximal_lvs" file="meshes/middle_proximal_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="middle_medial_lvs" file="meshes/middle_medial_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="middle_distal_lvs" file="meshes/middle_distal_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="metacarpal4_lvs" file="meshes/metacarpal4_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="ring_proximal_lvs" file="meshes/ring_proximal_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="ring_medial_lvs" file="meshes/ring_medial_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="ring_distal_lvs" file="meshes/ring_distal_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="metacarpal5_lvs" file="meshes/metacarpal5_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="little_proximal_lvs" file="meshes/little_proximal_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="little_medial_lvs" file="meshes/little_medial_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="little_distal_lvs" file="meshes/little_distal_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="metacarpal1_lvs" file="meshes/metacarpal1_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="thumb_proximal_lvs" file="meshes/thumb_proximal_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <mesh name="thumb_distal_lvs" file="meshes/thumb_distal_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
-    <texture builtin="gradient" height="100" rgb1=".4 .5 .6" rgb2="0 0 0" type="skybox" width="100"/>
+    <mesh name="r_pelvis" file="Geometry/r_pelvis.stl" scale="       1        1        1"></mesh>
+    <mesh name="l_pelvis" file="Geometry/l_pelvis.stl" scale="       1        1        1"></mesh>
+    <mesh name="sacrum" file="Geometry/sacrum.stl" scale="       1        1        1"></mesh>
+    <mesh name="r_femur" file="Geometry/r_femur.stl" scale="       1        1        1"></mesh>
+    <mesh name="r_tibia" file="Geometry/r_tibia.stl" scale="       1        1        1"></mesh>
+    <mesh name="r_fibula" file="Geometry/r_fibula.stl" scale="       1        1        1"></mesh>
+    <mesh name="r_talus" file="Geometry/r_talus.stl" scale="       1        1        1"></mesh>
+    <mesh name="r_foot" file="Geometry/r_foot.stl" scale="       1        1        1"></mesh>
+    <mesh name="r_bofoot" file="Geometry/r_bofoot.stl" scale="       1        1        1"></mesh>
+    <mesh name="r_patella" file="Geometry/r_patella.stl" scale="       1        1        1"></mesh>
+    <mesh name="l_femur" file="Geometry/l_femur.stl" scale="       1        1        1"></mesh>
+    <mesh name="l_tibia" file="Geometry/l_tibia.stl" scale="       1        1        1"></mesh>
+    <mesh name="l_fibula" file="Geometry/l_fibula.stl" scale="       1        1        1"></mesh>
+    <mesh name="l_talus" file="Geometry/l_talus.stl" scale="       1        1        1"></mesh>
+    <mesh name="l_foot" file="Geometry/l_foot.stl" scale="       1        1        1"></mesh>
+    <mesh name="l_bofoot" file="Geometry/l_bofoot.stl" scale="       1        1        1"></mesh>
+    <mesh name="l_patella" file="Geometry/l_patella.stl" scale="       1        1        1"></mesh>
+    <mesh name="hat_spine" file="Geometry/hat_spine.stl" scale="       1        1        1"></mesh>
+    <mesh name="hat_jaw" file="Geometry/hat_jaw.stl" scale="       1        1        1"></mesh>
+    <mesh name="hat_skull" file="Geometry/hat_skull.stl" scale="       1        1        1"></mesh>
+    <mesh name="hat_ribs_scap" file="Geometry/hat_ribs_scap.stl" scale="       1        1        1"></mesh>
+    <mesh name="humerus_rv" file="Geometry/humerus_rv.stl" scale="       1        1        1"></mesh>
+    <mesh name="ulna_rv" file="Geometry/ulna_rv.stl" scale="       1        1        1"></mesh>
+    <mesh name="radius_rv" file="Geometry/radius_rv.stl" scale="       1        1        1"></mesh>
+    <mesh name="pisiform_rvs" file="Geometry/pisiform_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="lunate_rvs" file="Geometry/lunate_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="scaphoid_rvs" file="Geometry/scaphoid_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="triquetrum_rvs" file="Geometry/triquetrum_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="hamate_rvs" file="Geometry/hamate_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="capitate_rvs" file="Geometry/capitate_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="trapezoid_rvs" file="Geometry/trapezoid_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="trapezium_rvs" file="Geometry/trapezium_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="metacarpal2_rvs" file="Geometry/metacarpal2_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="index_proximal_rvs" file="Geometry/index_proximal_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="index_medial_rvs" file="Geometry/index_medial_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="index_distal_rvs" file="Geometry/index_distal_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="metacarpal3_rvs" file="Geometry/metacarpal3_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="middle_proximal_rvs" file="Geometry/middle_proximal_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="middle_medial_rvs" file="Geometry/middle_medial_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="middle_distal_rvs" file="Geometry/middle_distal_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="metacarpal4_rvs" file="Geometry/metacarpal4_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="ring_proximal_rvs" file="Geometry/ring_proximal_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="ring_medial_rvs" file="Geometry/ring_medial_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="ring_distal_rvs" file="Geometry/ring_distal_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="metacarpal5_rvs" file="Geometry/metacarpal5_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="little_proximal_rvs" file="Geometry/little_proximal_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="little_medial_rvs" file="Geometry/little_medial_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="little_distal_rvs" file="Geometry/little_distal_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="metacarpal1_rvs" file="Geometry/metacarpal1_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="thumb_proximal_rvs" file="Geometry/thumb_proximal_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="thumb_distal_rvs" file="Geometry/thumb_distal_rvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="humerus_lv" file="Geometry/humerus_lv.stl" scale="       1        1        1"></mesh>
+    <mesh name="ulna_lv" file="Geometry/ulna_lv.stl" scale="       1        1        1"></mesh>
+    <mesh name="radius_lv" file="Geometry/radius_lv.stl" scale="       1        1        1"></mesh>
+    <mesh name="pisiform_lvs" file="Geometry/pisiform_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="lunate_lvs" file="Geometry/lunate_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="scaphoid_lvs" file="Geometry/scaphoid_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="triquetrum_lvs" file="Geometry/triquetrum_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="hamate_lvs" file="Geometry/hamate_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="capitate_lvs" file="Geometry/capitate_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="trapezoid_lvs" file="Geometry/trapezoid_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="trapezium_lvs" file="Geometry/trapezium_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="metacarpal2_lvs" file="Geometry/metacarpal2_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="index_proximal_lvs" file="Geometry/index_proximal_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="index_medial_lvs" file="Geometry/index_medial_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="index_distal_lvs" file="Geometry/index_distal_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="metacarpal3_lvs" file="Geometry/metacarpal3_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="middle_proximal_lvs" file="Geometry/middle_proximal_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="middle_medial_lvs" file="Geometry/middle_medial_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="middle_distal_lvs" file="Geometry/middle_distal_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="metacarpal4_lvs" file="Geometry/metacarpal4_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="ring_proximal_lvs" file="Geometry/ring_proximal_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="ring_medial_lvs" file="Geometry/ring_medial_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="ring_distal_lvs" file="Geometry/ring_distal_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="metacarpal5_lvs" file="Geometry/metacarpal5_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="little_proximal_lvs" file="Geometry/little_proximal_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="little_medial_lvs" file="Geometry/little_medial_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="little_distal_lvs" file="Geometry/little_distal_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="metacarpal1_lvs" file="Geometry/metacarpal1_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="thumb_proximal_lvs" file="Geometry/thumb_proximal_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
+    <mesh name="thumb_distal_lvs" file="Geometry/thumb_distal_lvs.stl" scale="    0.85     0.85     0.85"></mesh>
     <texture name="texplane" type="2d" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 0.15 0.2" width="100" height="100"></texture>
-    <texture name="texgeom" type="cube" builtin="flat" mark="cross" width="127" height="1278" rgb1="0.8 0.6 0.4" rgb2="0.8 0.6 0.4" markrgb="1 1 1" random="0.01"></texture>
-    <material name="MatPlane" reflectance="0.5" texture="texplane" texrepeat="1 1" texuniform="true"></material>
-    <material name="geom" texture="texgeom" texuniform="true"></material>
+    <material name="MatPlane" reflectance="0.0" texture="texplane" texrepeat="1 1" texuniform="true"></material>
   </asset>
   <tendon>
-    <spatial name="addbrev_r_tendon" springlength="0.035450291324676">
+    <spatial name="addbrev_r_tendon">
       <site site="addbrev_r-P1"></site>
       <site site="addbrev_r-P2"></site>
     </spatial>
-    <spatial name="addlong_r_tendon" springlength="0.131799363342026">
+    <spatial name="addlong_r_tendon">
       <site site="addlong_r-P1"></site>
       <site site="addlong_r-P2"></site>
     </spatial>
-    <spatial name="addmagDist_r_tendon" springlength="0.0873806954617727">
+    <spatial name="addmagDist_r_tendon">
       <site site="addmagDist_r-P1"></site>
       <site site="addmagDist_r-P2"></site>
     </spatial>
-    <spatial name="addmagIsch_r_tendon" springlength="0.216343023454343">
+    <spatial name="addmagIsch_r_tendon">
       <site site="addmagIsch_r-P1"></site>
       <site site="addmagIsch_r-P2"></site>
     </spatial>
-    <spatial name="addmagMid_r_tendon" springlength="0.0466276999070464">
+    <spatial name="addmagMid_r_tendon">
       <site site="addmagMid_r-P1"></site>
       <site site="addmagMid_r-P2"></site>
     </spatial>
-    <spatial name="addmagProx_r_tendon" springlength="0.0403240979232675">
+    <spatial name="addmagProx_r_tendon">
       <site site="addmagProx_r-P1"></site>
       <site site="addmagProx_r-P2"></site>
     </spatial>
-    <spatial name="bflh_r_tendon" springlength="0.325226647516457">
+    <spatial name="bflh_r_tendon">
       <site site="bflh_r-P1"></site>
       <site site="bflh_r-P2"></site>
       <site site="bflh_r-P3"></site>
     </spatial>
-    <spatial name="bfsh_r_tendon" springlength="0.105817218589115">
+    <spatial name="bfsh_r_tendon">
       <site site="bfsh_r-P1"></site>
       <site site="bfsh_r-P2"></site>
     </spatial>
-    <spatial name="edl_r_tendon" springlength="0.368875245465225">
+    <spatial name="edl_r_tendon">
       <site site="edl_r-P1"></site>
       <site site="edl_r-P2"></site>
       <site site="edl_r-P3"></site>
@@ -640,7 +631,7 @@
       <site site="edl_r-P5"></site>
       <site site="edl_r-P6"></site>
     </spatial>
-    <spatial name="ehl_r_tendon" springlength="0.326795279537187">
+    <spatial name="ehl_r_tendon">
       <site site="ehl_r-P1"></site>
       <site site="ehl_r-P2"></site>
       <site site="ehl_r-P3"></site>
@@ -650,7 +641,7 @@
       <site site="ehl_r-P7"></site>
       <site site="ehl_r-P8"></site>
     </spatial>
-    <spatial name="fdl_r_tendon" springlength="0.378772856793842">
+    <spatial name="fdl_r_tendon">
       <site site="fdl_r-P1"></site>
       <site site="fdl_r-P2"></site>
       <site site="fdl_r-P3"></site>
@@ -660,7 +651,7 @@
       <site site="fdl_r-P7"></site>
       <site site="fdl_r-P8"></site>
     </spatial>
-    <spatial name="fhl_r_tendon" springlength="0.354339676836818">
+    <spatial name="fhl_r_tendon">
       <site site="fhl_r-P1"></site>
       <site site="fhl_r-P2"></site>
       <site site="fhl_r-P3"></site>
@@ -669,75 +660,75 @@
       <site site="fhl_r-P6"></site>
       <site site="fhl_r-P7"></site>
     </spatial>
-    <spatial name="gaslat_r_tendon" springlength="0.376070169933794">
+    <spatial name="gaslat_r_tendon">
       <site site="gaslat_r-P1"></site>
       <site site="gaslat_r-P2"></site>
     </spatial>
-    <spatial name="gasmed_r_tendon" springlength="0.398716332626429">
+    <spatial name="gasmed_r_tendon">
       <site site="gasmed_r-P1"></site>
       <site site="gasmed_r-P2"></site>
     </spatial>
-    <spatial name="glmax1_r_tendon" springlength="0.0488408889462853">
+    <spatial name="glmax1_r_tendon">
       <site site="glmax1_r-P1"></site>
       <site site="glmax1_r-P2"></site>
       <site site="glmax1_r-P3"></site>
       <site site="glmax1_r-P4"></site>
     </spatial>
-    <spatial name="glmax2_r_tendon" springlength="0.0678871511792641">
+    <spatial name="glmax2_r_tendon">
       <site site="glmax2_r-P1"></site>
       <site site="glmax2_r-P2"></site>
       <site site="glmax2_r-P3"></site>
       <site site="glmax2_r-P4"></site>
     </spatial>
-    <spatial name="glmax3_r_tendon" springlength="0.0697166058843707">
+    <spatial name="glmax3_r_tendon">
       <site site="glmax3_r-P1"></site>
       <site site="glmax3_r-P2"></site>
       <site site="glmax3_r-P3"></site>
       <site site="glmax3_r-P4"></site>
     </spatial>
-    <spatial name="glmed1_r_tendon" springlength="0.0558168319436554">
+    <spatial name="glmed1_r_tendon">
       <site site="glmed1_r-P1"></site>
       <site site="glmed1_r-P2"></site>
     </spatial>
-    <spatial name="glmed2_r_tendon" springlength="0.0652488111992348">
+    <spatial name="glmed2_r_tendon">
       <site site="glmed2_r-P1"></site>
       <site site="glmed2_r-P2"></site>
     </spatial>
-    <spatial name="glmed3_r_tendon" springlength="0.0452328436013583">
+    <spatial name="glmed3_r_tendon">
       <site site="glmed3_r-P1"></site>
       <site site="glmed3_r-P2"></site>
     </spatial>
-    <spatial name="glmin1_r_tendon" springlength="0.0161377823749703">
+    <spatial name="glmin1_r_tendon">
       <site site="glmin1_r-P1"></site>
       <site site="glmin1_r-P2"></site>
     </spatial>
-    <spatial name="glmin2_r_tendon" springlength="0.0260990524098789">
+    <spatial name="glmin2_r_tendon">
       <site site="glmin2_r-P1"></site>
       <site site="glmin2_r-P2"></site>
     </spatial>
-    <spatial name="glmin3_r_tendon" springlength="0.0508725">
+    <spatial name="glmin3_r_tendon">
       <site site="glmin3_r-P1"></site>
       <site site="glmin3_r-P2"></site>
     </spatial>
-    <spatial name="grac_r_tendon" springlength="0.172013810564373">
+    <spatial name="grac_r_tendon">
       <site site="grac_r-P1"></site>
       <site site="grac_r-P2"></site>
       <site site="grac_r-P3"></site>
     </spatial>
-    <spatial name="iliacus_r_tendon" springlength="0.0961207083983258">
+    <spatial name="iliacus_r_tendon">
       <site site="iliacus_r-P1"></site>
       <site site="iliacus_r-P2"></site>
       <site site="iliacus_r-P3"></site>
       <site site="iliacus_r-P4"></site>
     </spatial>
-    <spatial name="perbrev_r_tendon" springlength="0.147527533956538">
+    <spatial name="perbrev_r_tendon">
       <site site="perbrev_r-P1"></site>
       <site site="perbrev_r-P2"></site>
       <site site="perbrev_r-P3"></site>
       <site site="perbrev_r-P4"></site>
       <site site="perbrev_r-P5"></site>
     </spatial>
-    <spatial name="perlong_r_tendon" springlength="0.332220762637978">
+    <spatial name="perlong_r_tendon">
       <site site="perlong_r-P1"></site>
       <site site="perlong_r-P2"></site>
       <site site="perlong_r-P3"></site>
@@ -746,117 +737,117 @@
       <site site="perlong_r-P6"></site>
       <site site="perlong_r-P7"></site>
     </spatial>
-    <spatial name="piri_r_tendon" springlength="0.114906238342785">
+    <spatial name="piri_r_tendon">
       <site site="piri_r-P1"></site>
       <site site="piri_r-P2"></site>
       <site site="piri_r-P3"></site>
     </spatial>
-    <spatial name="psoas_r_tendon" springlength="0.0995431658555083">
+    <spatial name="psoas_r_tendon">
       <site site="psoas_r-P1"></site>
       <site site="psoas_r-P2"></site>
       <site site="psoas_r-P3"></site>
       <site site="psoas_r-P4"></site>
     </spatial>
-    <spatial name="recfem_r_tendon" springlength="0.448493537399412">
+    <spatial name="recfem_r_tendon">
       <site site="recfem_r-P1"></site>
       <site site="recfem_r-P2"></site>
       <site site="recfem_r-P3"></site>
       <site site="recfem_r-P4"></site>
       <site site="recfem_r-P5"></site>
     </spatial>
-    <spatial name="sart_r_tendon" springlength="0.123999830194402">
+    <spatial name="sart_r_tendon">
       <site site="sart_r-P1"></site>
       <site site="sart_r-P2"></site>
       <site site="sart_r-P3"></site>
       <site site="sart_r-P4"></site>
       <site site="sart_r-P5"></site>
     </spatial>
-    <spatial name="semimem_r_tendon" springlength="0.347585979533214">
+    <spatial name="semimem_r_tendon">
       <site site="semimem_r-P1"></site>
       <site site="semimem_r-P2"></site>
     </spatial>
-    <spatial name="semiten_r_tendon" springlength="0.24719894503751">
+    <spatial name="semiten_r_tendon">
       <site site="semiten_r-P1"></site>
       <site site="semiten_r-P2"></site>
       <site site="semiten_r-P3"></site>
     </spatial>
-    <spatial name="soleus_r_tendon" springlength="0.276755872375976">
+    <spatial name="soleus_r_tendon">
       <site site="soleus_r-P1"></site>
       <site site="soleus_r-P2"></site>
     </spatial>
-    <spatial name="tfl_r_tendon" springlength="0.449497053805428">
+    <spatial name="tfl_r_tendon">
       <site site="tfl_r-P1"></site>
       <site site="tfl_r-P2"></site>
       <site site="tfl_r-P3"></site>
       <site site="tfl_r-P4"></site>
     </spatial>
-    <spatial name="tibant_r_tendon" springlength="0.240461026409367">
+    <spatial name="tibant_r_tendon">
       <site site="tibant_r-P1"></site>
       <site site="tibant_r-P2"></site>
       <site site="tibant_r-P3"></site>
       <site site="tibant_r-P4"></site>
     </spatial>
-    <spatial name="tibpost_r_tendon" springlength="0.280779613883954">
+    <spatial name="tibpost_r_tendon">
       <site site="tibpost_r-P1"></site>
       <site site="tibpost_r-P2"></site>
       <site site="tibpost_r-P3"></site>
       <site site="tibpost_r-P4"></site>
     </spatial>
-    <spatial name="vasint_r_tendon" springlength="0.202210670345763">
+    <spatial name="vasint_r_tendon">
       <site site="vasint_r-P1"></site>
       <site site="vasint_r-P2"></site>
       <site site="vasint_r-P3"></site>
       <site site="vasint_r-P4"></site>
       <site site="vasint_r-P5"></site>
     </spatial>
-    <spatial name="vaslat_r_tendon" springlength="0.220601284834603">
+    <spatial name="vaslat_r_tendon">
       <site site="vaslat_r-P1"></site>
       <site site="vaslat_r-P2"></site>
       <site site="vaslat_r-P3"></site>
       <site site="vaslat_r-P4"></site>
       <site site="vaslat_r-P5"></site>
     </spatial>
-    <spatial name="vasmed_r_tendon" springlength="0.199904270842317">
+    <spatial name="vasmed_r_tendon">
       <site site="vasmed_r-P1"></site>
       <site site="vasmed_r-P2"></site>
       <site site="vasmed_r-P3"></site>
       <site site="vasmed_r-P4"></site>
       <site site="vasmed_r-P5"></site>
     </spatial>
-    <spatial name="addbrev_l_tendon" springlength="0.035450291324676">
+    <spatial name="addbrev_l_tendon">
       <site site="addbrev_l-P1"></site>
       <site site="addbrev_l-P2"></site>
     </spatial>
-    <spatial name="addlong_l_tendon" springlength="0.131799363342026">
+    <spatial name="addlong_l_tendon">
       <site site="addlong_l-P1"></site>
       <site site="addlong_l-P2"></site>
     </spatial>
-    <spatial name="addmagDist_l_tendon" springlength="0.0873806954617727">
+    <spatial name="addmagDist_l_tendon">
       <site site="addmagDist_l-P1"></site>
       <site site="addmagDist_l-P2"></site>
     </spatial>
-    <spatial name="addmagIsch_l_tendon" springlength="0.216343023454343">
+    <spatial name="addmagIsch_l_tendon">
       <site site="addmagIsch_l-P1"></site>
       <site site="addmagIsch_l-P2"></site>
     </spatial>
-    <spatial name="addmagMid_l_tendon" springlength="0.0466276999070464">
+    <spatial name="addmagMid_l_tendon">
       <site site="addmagMid_l-P1"></site>
       <site site="addmagMid_l-P2"></site>
     </spatial>
-    <spatial name="addmagProx_l_tendon" springlength="0.0403240979232675">
+    <spatial name="addmagProx_l_tendon">
       <site site="addmagProx_l-P1"></site>
       <site site="addmagProx_l-P2"></site>
     </spatial>
-    <spatial name="bflh_l_tendon" springlength="0.325226647516457">
+    <spatial name="bflh_l_tendon">
       <site site="bflh_l-P1"></site>
       <site site="bflh_l-P2"></site>
       <site site="bflh_l-P3"></site>
     </spatial>
-    <spatial name="bfsh_l_tendon" springlength="0.105817218589115">
+    <spatial name="bfsh_l_tendon">
       <site site="bfsh_l-P1"></site>
       <site site="bfsh_l-P2"></site>
     </spatial>
-    <spatial name="edl_l_tendon" springlength="0.368875245465225">
+    <spatial name="edl_l_tendon">
       <site site="edl_l-P1"></site>
       <site site="edl_l-P2"></site>
       <site site="edl_l-P3"></site>
@@ -864,7 +855,7 @@
       <site site="edl_l-P5"></site>
       <site site="edl_l-P6"></site>
     </spatial>
-    <spatial name="ehl_l_tendon" springlength="0.326795279537187">
+    <spatial name="ehl_l_tendon">
       <site site="ehl_l-P1"></site>
       <site site="ehl_l-P2"></site>
       <site site="ehl_l-P3"></site>
@@ -874,7 +865,7 @@
       <site site="ehl_l-P7"></site>
       <site site="ehl_l-P8"></site>
     </spatial>
-    <spatial name="fdl_l_tendon" springlength="0.378772856793842">
+    <spatial name="fdl_l_tendon">
       <site site="fdl_l-P1"></site>
       <site site="fdl_l-P2"></site>
       <site site="fdl_l-P3"></site>
@@ -884,7 +875,7 @@
       <site site="fdl_l-P7"></site>
       <site site="fdl_l-P8"></site>
     </spatial>
-    <spatial name="fhl_l_tendon" springlength="0.354339676836818">
+    <spatial name="fhl_l_tendon">
       <site site="fhl_l-P1"></site>
       <site site="fhl_l-P2"></site>
       <site site="fhl_l-P3"></site>
@@ -893,75 +884,75 @@
       <site site="fhl_l-P6"></site>
       <site site="fhl_l-P7"></site>
     </spatial>
-    <spatial name="gaslat_l_tendon" springlength="0.376070169933794">
+    <spatial name="gaslat_l_tendon">
       <site site="gaslat_l-P1"></site>
       <site site="gaslat_l-P2"></site>
     </spatial>
-    <spatial name="gasmed_l_tendon" springlength="0.398716332626429">
+    <spatial name="gasmed_l_tendon">
       <site site="gasmed_l-P1"></site>
       <site site="gasmed_l-P2"></site>
     </spatial>
-    <spatial name="glmax1_l_tendon" springlength="0.0488408889462853">
+    <spatial name="glmax1_l_tendon">
       <site site="glmax1_l-P1"></site>
       <site site="glmax1_l-P2"></site>
       <site site="glmax1_l-P3"></site>
       <site site="glmax1_l-P4"></site>
     </spatial>
-    <spatial name="glmax2_l_tendon" springlength="0.0678871511792641">
+    <spatial name="glmax2_l_tendon">
       <site site="glmax2_l-P1"></site>
       <site site="glmax2_l-P2"></site>
       <site site="glmax2_l-P3"></site>
       <site site="glmax2_l-P4"></site>
     </spatial>
-    <spatial name="glmax3_l_tendon" springlength="0.0697166058843707">
+    <spatial name="glmax3_l_tendon">
       <site site="glmax3_l-P1"></site>
       <site site="glmax3_l-P2"></site>
       <site site="glmax3_l-P3"></site>
       <site site="glmax3_l-P4"></site>
     </spatial>
-    <spatial name="glmed1_l_tendon" springlength="0.0558168319436554">
+    <spatial name="glmed1_l_tendon">
       <site site="glmed1_l-P1"></site>
       <site site="glmed1_l-P2"></site>
     </spatial>
-    <spatial name="glmed2_l_tendon" springlength="0.0652488111992348">
+    <spatial name="glmed2_l_tendon">
       <site site="glmed2_l-P1"></site>
       <site site="glmed2_l-P2"></site>
     </spatial>
-    <spatial name="glmed3_l_tendon" springlength="0.0452328436013583">
+    <spatial name="glmed3_l_tendon">
       <site site="glmed3_l-P1"></site>
       <site site="glmed3_l-P2"></site>
     </spatial>
-    <spatial name="glmin1_l_tendon" springlength="0.0161377823749703">
+    <spatial name="glmin1_l_tendon">
       <site site="glmin1_l-P1"></site>
       <site site="glmin1_l-P2"></site>
     </spatial>
-    <spatial name="glmin2_l_tendon" springlength="0.0260990524098789">
+    <spatial name="glmin2_l_tendon">
       <site site="glmin2_l-P1"></site>
       <site site="glmin2_l-P2"></site>
     </spatial>
-    <spatial name="glmin3_l_tendon" springlength="0.0508725">
+    <spatial name="glmin3_l_tendon">
       <site site="glmin3_l-P1"></site>
       <site site="glmin3_l-P2"></site>
     </spatial>
-    <spatial name="grac_l_tendon" springlength="0.172013810564373">
+    <spatial name="grac_l_tendon">
       <site site="grac_l-P1"></site>
       <site site="grac_l-P2"></site>
       <site site="grac_l-P3"></site>
     </spatial>
-    <spatial name="iliacus_l_tendon" springlength="0.0961207083983258">
+    <spatial name="iliacus_l_tendon">
       <site site="iliacus_l-P1"></site>
       <site site="iliacus_l-P2"></site>
       <site site="iliacus_l-P3"></site>
       <site site="iliacus_l-P4"></site>
     </spatial>
-    <spatial name="perbrev_l_tendon" springlength="0.147527533956538">
+    <spatial name="perbrev_l_tendon">
       <site site="perbrev_l-P1"></site>
       <site site="perbrev_l-P2"></site>
       <site site="perbrev_l-P3"></site>
       <site site="perbrev_l-P4"></site>
       <site site="perbrev_l-P5"></site>
     </spatial>
-    <spatial name="perlong_l_tendon" springlength="0.332220762637978">
+    <spatial name="perlong_l_tendon">
       <site site="perlong_l-P1"></site>
       <site site="perlong_l-P2"></site>
       <site site="perlong_l-P3"></site>
@@ -970,77 +961,77 @@
       <site site="perlong_l-P6"></site>
       <site site="perlong_l-P7"></site>
     </spatial>
-    <spatial name="piri_l_tendon" springlength="0.114906238342785">
+    <spatial name="piri_l_tendon">
       <site site="piri_l-P1"></site>
       <site site="piri_l-P2"></site>
       <site site="piri_l-P3"></site>
     </spatial>
-    <spatial name="psoas_l_tendon" springlength="0.0995431658555083">
+    <spatial name="psoas_l_tendon">
       <site site="psoas_l-P1"></site>
       <site site="psoas_l-P2"></site>
       <site site="psoas_l-P3"></site>
       <site site="psoas_l-P4"></site>
     </spatial>
-    <spatial name="recfem_l_tendon" springlength="0.448493537399412">
+    <spatial name="recfem_l_tendon">
       <site site="recfem_l-P1"></site>
       <site site="recfem_l-P2"></site>
       <site site="recfem_l-P3"></site>
       <site site="recfem_l-P4"></site>
       <site site="recfem_l-P5"></site>
     </spatial>
-    <spatial name="sart_l_tendon" springlength="0.123999830194402">
+    <spatial name="sart_l_tendon">
       <site site="sart_l-P1"></site>
       <site site="sart_l-P2"></site>
       <site site="sart_l-P3"></site>
       <site site="sart_l-P4"></site>
       <site site="sart_l-P5"></site>
     </spatial>
-    <spatial name="semimem_l_tendon" springlength="0.347585979533214">
+    <spatial name="semimem_l_tendon">
       <site site="semimem_l-P1"></site>
       <site site="semimem_l-P2"></site>
     </spatial>
-    <spatial name="semiten_l_tendon" springlength="0.24719894503751">
+    <spatial name="semiten_l_tendon">
       <site site="semiten_l-P1"></site>
       <site site="semiten_l-P2"></site>
       <site site="semiten_l-P3"></site>
     </spatial>
-    <spatial name="soleus_l_tendon" springlength="0.276755872375976">
+    <spatial name="soleus_l_tendon">
       <site site="soleus_l-P1"></site>
       <site site="soleus_l-P2"></site>
     </spatial>
-    <spatial name="tfl_l_tendon" springlength="0.449497053805428">
+    <spatial name="tfl_l_tendon">
       <site site="tfl_l-P1"></site>
       <site site="tfl_l-P2"></site>
       <site site="tfl_l-P3"></site>
       <site site="tfl_l-P4"></site>
     </spatial>
-    <spatial name="tibant_l_tendon" springlength="0.240461026409367">
+    <spatial name="tibant_l_tendon">
       <site site="tibant_l-P1"></site>
       <site site="tibant_l-P2"></site>
       <site site="tibant_l-P3"></site>
       <site site="tibant_l-P4"></site>
     </spatial>
-    <spatial name="tibpost_l_tendon" springlength="0.280779613883954">
+    <spatial name="tibpost_l_tendon">
       <site site="tibpost_l-P1"></site>
       <site site="tibpost_l-P2"></site>
       <site site="tibpost_l-P3"></site>
       <site site="tibpost_l-P4"></site>
     </spatial>
-    <spatial name="vasint_l_tendon" springlength="0.202210670345763">
+    <spatial name="vasint_l_tendon">
       <site site="vasint_l-P1"></site>
       <site site="vasint_l-P2"></site>
       <site site="vasint_l-P3"></site>
       <site site="vasint_l-P4"></site>
       <site site="vasint_l-P5"></site>
     </spatial>
-    <spatial name="vaslat_l_tendon" springlength="0.220601284834603">
+    <spatial name="vaslat_l_tendon">
       <site site="vaslat_l-P1"></site>
       <site site="vaslat_l-P2"></site>
       <site site="vaslat_l-P3"></site>
       <site site="vaslat_l-P4"></site>
       <site site="vaslat_l-P5"></site>
     </spatial>
-    <spatial name="vasmed_l_tendon" springlength="0.199904270842317">
+    <spatial name="vasmed_l_tendon">
       <site site="vasmed_l-P1"></site>
       <site site="vasmed_l-P2"></site>
       <site site="vasmed_l-P3"></site>
