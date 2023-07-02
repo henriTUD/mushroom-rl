@@ -30,6 +30,7 @@ class FullHumanoid(BaseHumanoid):
             assert tmp_dir_name is not None, "If you want to use brick foots or disable the arms, you have to specify a" \
                                              "directory name for the xml-files to be saved."
         xml_path = (Path(__file__).resolve().parent.parent / "data" / "full_humanoid" / xml_file_name).as_posix()
+        self.xml_file_name = xml_file_name
 
         action_spec = [# motors
                        "lumbar_ext", "lumbar_bend", "lumbar_rot", "shoulder_flex_r", "shoulder_add_r", "shoulder_rot_r",
@@ -292,9 +293,8 @@ class FullHumanoid(BaseHumanoid):
         new_model_dir_name = 'new_full_humanoid_with_bricks_model/' +  tmp_dir_name + "/"
         cwd = Path.cwd()
         new_model_dir_path = Path.joinpath(cwd, new_model_dir_name)
-        xml_file_name =  "modified_reduced_humanoid.xml"
-        mjcf.export_with_assets(xml_handle, new_model_dir_path, xml_file_name)
-        new_xml_path = Path.joinpath(new_model_dir_path, xml_file_name)
+        mjcf.export_with_assets(xml_handle, new_model_dir_path, self.xml_file_name)
+        new_xml_path = Path.joinpath(new_model_dir_path, self.xml_file_name)
 
         return new_xml_path.as_posix()
 
