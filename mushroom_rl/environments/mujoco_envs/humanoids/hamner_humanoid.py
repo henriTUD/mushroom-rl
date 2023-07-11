@@ -15,39 +15,52 @@ except ModuleNotFoundError:
     mujoco_viewer_available = False
 
 
-class FullHumanoid(BaseHumanoid):
+class HamnerHumanoid(BaseHumanoid):
     """
     Mujoco simulation of full humanoid with muscle-actuated lower limb and torque-actuated upper body.
 
     """
     def __init__(self, obs_muscle_lens=False, obs_muscle_vels=False, obs_muscle_forces=False, use_brick_foots=False, disable_arms=False, tmp_dir_name=None,
-                 xml_file_name='full_humanoid.xml', **kwargs):
+                 xml_file_name='hamner_humanoid.xml', strict_reset_condition=True, **kwargs):
         """
         Constructor.
 
         """
+        print("USING XML: " + xml_file_name)
         if use_brick_foots:
             assert tmp_dir_name is not None, "If you want to use brick foots or disable the arms, you have to specify a" \
                                              "directory name for the xml-files to be saved."
-        xml_path = (Path(__file__).resolve().parent.parent / "data" / "full_humanoid" / xml_file_name).as_posix()
+        xml_path = (Path(__file__).resolve().parent.parent / "data" / "hamner_humanoid" / xml_file_name).as_posix()
         self.xml_file_name = xml_file_name
 
-        action_spec = [# motors
-                       "lumbar_ext", "lumbar_bend", "lumbar_rot", "shoulder_flex_r", "shoulder_add_r", "shoulder_rot_r",
-                       "elbow_flex_r", "pro_sup_r", "wrist_flex_r", "wrist_dev_r", "shoulder_flex_l", "shoulder_add_l",
-                       "shoulder_rot_l", "elbow_flex_l", "pro_sup_l", "wrist_flex_l", "wrist_dev_l",
-                       # muscles
-                       "addbrev_r", "addlong_r", "addmagDist_r", "addmagIsch_r", "addmagMid_r", "addmagProx_r",
-                       "bflh_r", "bfsh_r", "edl_r", "ehl_r", "fdl_r", "fhl_r", "gaslat_r", "gasmed_r", "glmax1_r",
-                       "glmax2_r", "glmax3_r", "glmed1_r", "glmed2_r", "glmed3_r", "glmin1_r", "glmin2_r",
-                       "glmin3_r", "grac_r", "iliacus_r", "perbrev_r", "perlong_r", "piri_r", "psoas_r", "recfem_r",
-                       "sart_r", "semimem_r", "semiten_r", "soleus_r", "tfl_r", "tibant_r", "tibpost_r", "vasint_r",
-                       "vaslat_r", "vasmed_r", "addbrev_l", "addlong_l", "addmagDist_l", "addmagIsch_l", "addmagMid_l",
-                       "addmagProx_l", "bflh_l", "bfsh_l", "edl_l", "ehl_l", "fdl_l", "fhl_l", "gaslat_l", "gasmed_l",
-                       "glmax1_l", "glmax2_l", "glmax3_l", "glmed1_l", "glmed2_l", "glmed3_l", "glmin1_l", "glmin2_l",
-                       "glmin3_l", "grac_l", "iliacus_l", "perbrev_l", "perlong_l", "piri_l", "psoas_l", "recfem_l",
-                       "sart_l", "semimem_l", "semiten_l", "soleus_l", "tfl_l", "tibant_l", "tibpost_l", "vasint_l",
-                       "vaslat_l", "vasmed_l"]
+        self.strict_reset_condition = strict_reset_condition
+
+        self.arm_motors = [
+            "shoulder_flex_r", "shoulder_add_r", "shoulder_rot_r",
+            "elbow_flex_r", "pro_sup_r", "wrist_flex_r", "wrist_dev_r", "shoulder_flex_l", "shoulder_add_l",
+            "shoulder_rot_l", "elbow_flex_l", "pro_sup_l", "wrist_flex_l", "wrist_dev_l"
+        ]
+        self.muscles = [
+            "glut_med1_r", "glut_med2_r", "glut_med3_r", "glut_min1_r", "glut_min2_r", "glut_min3_r",
+            "semimem_r", "semiten_r", "bifemlh_r", "bifemsh_r", "sar_r", "add_long_r", "add_brev_r",
+            "add_mag1_r", "add_mag2_r", "add_mag3_r", "tfl_r", "pect_r", "grac_r", "glut_max1_r",
+            "glut_max2_r", "glut_max3_r", "iliacus_r", "psoas_r", "quad_fem_r", "gem_r", "peri_r",
+            "rect_fem_r", "vas_med_r", "vas_int_r", "vas_lat_r", "med_gas_r", "lat_gas_r",
+            "soleus_r", "tib_post_r", "flex_dig_r", "flex_hal_r", "tib_ant_r", "per_brev_r",
+            "per_long_r", "per_tert_r", "ext_dig_r", "ext_hal_r", "glut_med1_l", "glut_med2_l",
+            "glut_med3_l", "glut_min1_l", "glut_min2_l", "glut_min3_l", "semimem_l", "semiten_l",
+            "bifemlh_l", "bifemsh_l", "sar_l", "add_long_l", "add_brev_l", "add_mag1_l", "add_mag2_l",
+            "add_mag3_l", "tfl_l", "pect_l", "grac_l", "glut_max1_l", "glut_max2_l", "glut_max3_l",
+            "iliacus_l", "psoas_l", "quad_fem_l", "gem_l", "peri_l", "rect_fem_l", "vas_med_l",
+            "vas_int_l", "vas_lat_l", "med_gas_l", "lat_gas_l", "soleus_l", "tib_post_l",
+            "flex_dig_l", "flex_hal_l", "tib_ant_l", "per_brev_l", "per_long_l", "per_tert_l",
+            "ext_dig_l", "ext_hal_l", "ercspn_r", "ercspn_l", "intobl_r", "intobl_l",
+            "extobl_r", "extobl_l",
+        ]
+
+        action_spec = []
+        action_spec.extend(self.arm_motors)
+        action_spec.extend(self.muscles)
 
         observation_spec = [#------------- JOINT POS -------------
                             ("q_pelvis_tx", "pelvis_tx", ObservationType.JOINT_POS),
@@ -60,32 +73,32 @@ class FullHumanoid(BaseHumanoid):
                             ("q_hip_flexion_r", "hip_flexion_r", ObservationType.JOINT_POS),
                             ("q_hip_adduction_r", "hip_adduction_r", ObservationType.JOINT_POS),
                             ("q_hip_rotation_r", "hip_rotation_r", ObservationType.JOINT_POS),
-                            ("q_knee_angle_r_translation2", "knee_angle_r_translation2", ObservationType.JOINT_POS),
-                            ("q_knee_angle_r_translation1", "knee_angle_r_translation1", ObservationType.JOINT_POS),
+                            #("q_knee_angle_r_translation2", "knee_angle_r_translation2", ObservationType.JOINT_POS),
+                            #("q_knee_angle_r_translation1", "knee_angle_r_translation1", ObservationType.JOINT_POS),
                             ("q_knee_angle_r", "knee_angle_r", ObservationType.JOINT_POS),
-                            ("q_knee_angle_r_rotation2", "knee_angle_r_rotation2", ObservationType.JOINT_POS),
-                            ("q_knee_angle_r_rotation3", "knee_angle_r_rotation3", ObservationType.JOINT_POS),
+                            #("q_knee_angle_r_rotation2", "knee_angle_r_rotation2", ObservationType.JOINT_POS),
+                            #("q_knee_angle_r_rotation3", "knee_angle_r_rotation3", ObservationType.JOINT_POS),
                             ("q_ankle_angle_r", "ankle_angle_r", ObservationType.JOINT_POS),
                             ("q_subtalar_angle_r", "subtalar_angle_r", ObservationType.JOINT_POS),
                             ("q_mtp_angle_r", "mtp_angle_r", ObservationType.JOINT_POS),
-                            ("q_knee_angle_r_beta_translation2", "knee_angle_r_beta_translation2", ObservationType.JOINT_POS),
-                            ("q_knee_angle_r_beta_translation1", "knee_angle_r_beta_translation1", ObservationType.JOINT_POS),
-                            ("q_knee_angle_r_beta_rotation1", "knee_angle_r_beta_rotation1", ObservationType.JOINT_POS),
+                            #("q_knee_angle_r_beta_translation2", "knee_angle_r_beta_translation2", ObservationType.JOINT_POS),
+                            #("q_knee_angle_r_beta_translation1", "knee_angle_r_beta_translation1", ObservationType.JOINT_POS),
+                            #("q_knee_angle_r_beta_rotation1", "knee_angle_r_beta_rotation1", ObservationType.JOINT_POS),
                             # --- lower limb left ---
                             ("q_hip_flexion_l", "hip_flexion_l", ObservationType.JOINT_POS),
                             ("q_hip_adduction_l", "hip_adduction_l", ObservationType.JOINT_POS),
                             ("q_hip_rotation_l", "hip_rotation_l", ObservationType.JOINT_POS),
-                            ("q_knee_angle_l_translation2", "knee_angle_l_translation2", ObservationType.JOINT_POS),
-                            ("q_knee_angle_l_translation1", "knee_angle_l_translation1", ObservationType.JOINT_POS),
+                            #("q_knee_angle_l_translation2", "knee_angle_l_translation2", ObservationType.JOINT_POS),
+                            #("q_knee_angle_l_translation1", "knee_angle_l_translation1", ObservationType.JOINT_POS),
                             ("q_knee_angle_l", "knee_angle_l", ObservationType.JOINT_POS),
-                            ("q_knee_angle_l_rotation2", "knee_angle_l_rotation2", ObservationType.JOINT_POS),
-                            ("q_knee_angle_l_rotation3", "knee_angle_l_rotation3", ObservationType.JOINT_POS),
+                            #("q_knee_angle_l_rotation2", "knee_angle_l_rotation2", ObservationType.JOINT_POS),
+                            #("q_knee_angle_l_rotation3", "knee_angle_l_rotation3", ObservationType.JOINT_POS),
                             ("q_ankle_angle_l", "ankle_angle_l", ObservationType.JOINT_POS),
                             ("q_subtalar_angle_l", "subtalar_angle_l", ObservationType.JOINT_POS),
                             ("q_mtp_angle_l", "mtp_angle_l", ObservationType.JOINT_POS),
-                            ("q_knee_angle_l_beta_translation2", "knee_angle_l_beta_translation2", ObservationType.JOINT_POS),
-                            ("q_knee_angle_l_beta_translation1", "knee_angle_l_beta_translation1", ObservationType.JOINT_POS),
-                            ("q_knee_angle_l_beta_rotation1", "knee_angle_l_beta_rotation1", ObservationType.JOINT_POS),
+                            #("q_knee_angle_l_beta_translation2", "knee_angle_l_beta_translation2", ObservationType.JOINT_POS),
+                            #("q_knee_angle_l_beta_translation1", "knee_angle_l_beta_translation1", ObservationType.JOINT_POS),
+                            #("q_knee_angle_l_beta_rotation1", "knee_angle_l_beta_rotation1", ObservationType.JOINT_POS),
                             # --- lumbar ---
                             ("q_lumbar_extension", "lumbar_extension", ObservationType.JOINT_POS),
                             ("q_lumbar_bending", "lumbar_bending", ObservationType.JOINT_POS),
@@ -118,32 +131,32 @@ class FullHumanoid(BaseHumanoid):
                             ("dq_hip_flexion_r", "hip_flexion_r", ObservationType.JOINT_VEL),
                             ("dq_hip_adduction_r", "hip_adduction_r", ObservationType.JOINT_VEL),
                             ("dq_hip_rotation_r", "hip_rotation_r", ObservationType.JOINT_VEL),
-                            ("dq_knee_angle_r_translation2", "knee_angle_r_translation2", ObservationType.JOINT_VEL),
-                            ("dq_knee_angle_r_translation1", "knee_angle_r_translation1", ObservationType.JOINT_VEL),
+                            #("dq_knee_angle_r_translation2", "knee_angle_r_translation2", ObservationType.JOINT_VEL),
+                            #("dq_knee_angle_r_translation1", "knee_angle_r_translation1", ObservationType.JOINT_VEL),
                             ("dq_knee_angle_r", "knee_angle_r", ObservationType.JOINT_VEL),
-                            ("dq_knee_angle_r_rotation2", "knee_angle_r_rotation2", ObservationType.JOINT_VEL),
-                            ("dq_knee_angle_r_rotation3", "knee_angle_r_rotation3", ObservationType.JOINT_VEL),
+                            #("dq_knee_angle_r_rotation2", "knee_angle_r_rotation2", ObservationType.JOINT_VEL),
+                            #("dq_knee_angle_r_rotation3", "knee_angle_r_rotation3", ObservationType.JOINT_VEL),
                             ("dq_ankle_angle_r", "ankle_angle_r", ObservationType.JOINT_VEL),
                             ("dq_subtalar_angle_r", "subtalar_angle_r", ObservationType.JOINT_VEL),
                             ("dq_mtp_angle_r", "mtp_angle_r", ObservationType.JOINT_VEL),
-                            ("dq_knee_angle_r_beta_translation2", "knee_angle_r_beta_translation2", ObservationType.JOINT_VEL),
-                            ("dq_knee_angle_r_beta_translation1", "knee_angle_r_beta_translation1", ObservationType.JOINT_VEL),
-                            ("dq_knee_angle_r_beta_rotation1", "knee_angle_r_beta_rotation1", ObservationType.JOINT_VEL),
+                            #("dq_knee_angle_r_beta_translation2", "knee_angle_r_beta_translation2", ObservationType.JOINT_VEL),
+                            #("dq_knee_angle_r_beta_translation1", "knee_angle_r_beta_translation1", ObservationType.JOINT_VEL),
+                            #("dq_knee_angle_r_beta_rotation1", "knee_angle_r_beta_rotation1", ObservationType.JOINT_VEL),
                             # --- lower limb left ---
                             ("dq_hip_flexion_l", "hip_flexion_l", ObservationType.JOINT_VEL),
                             ("dq_hip_adduction_l", "hip_adduction_l", ObservationType.JOINT_VEL),
                             ("dq_hip_rotation_l", "hip_rotation_l", ObservationType.JOINT_VEL),
-                            ("dq_knee_angle_l_translation2", "knee_angle_l_translation2", ObservationType.JOINT_VEL),
-                            ("dq_knee_angle_l_translation1", "knee_angle_l_translation1", ObservationType.JOINT_VEL),
+                            #("dq_knee_angle_l_translation2", "knee_angle_l_translation2", ObservationType.JOINT_VEL),
+                            #("dq_knee_angle_l_translation1", "knee_angle_l_translation1", ObservationType.JOINT_VEL),
                             ("dq_knee_angle_l", "knee_angle_l", ObservationType.JOINT_VEL),
-                            ("dq_knee_angle_l_rotation2", "knee_angle_l_rotation2", ObservationType.JOINT_VEL),
-                            ("dq_knee_angle_l_rotation3", "knee_angle_l_rotation3", ObservationType.JOINT_VEL),
+                            #("dq_knee_angle_l_rotation2", "knee_angle_l_rotation2", ObservationType.JOINT_VEL),
+                            #("dq_knee_angle_l_rotation3", "knee_angle_l_rotation3", ObservationType.JOINT_VEL),
                             ("dq_ankle_angle_l", "ankle_angle_l", ObservationType.JOINT_VEL),
                             ("dq_subtalar_angle_l", "subtalar_angle_l", ObservationType.JOINT_VEL),
                             ("dq_mtp_angle_l", "mtp_angle_l", ObservationType.JOINT_VEL),
-                            ("dq_knee_angle_l_beta_translation2", "knee_angle_l_beta_translation2", ObservationType.JOINT_VEL),
-                            ("dq_knee_angle_l_beta_translation1", "knee_angle_l_beta_translation1", ObservationType.JOINT_VEL),
-                            ("dq_knee_angle_l_beta_rotation1", "knee_angle_l_beta_rotation1", ObservationType.JOINT_VEL),
+                            #("dq_knee_angle_l_beta_translation2", "knee_angle_l_beta_translation2", ObservationType.JOINT_VEL),
+                            #("dq_knee_angle_l_beta_translation1", "knee_angle_l_beta_translation1", ObservationType.JOINT_VEL),
+                            #("dq_knee_angle_l_beta_rotation1", "knee_angle_l_beta_rotation1", ObservationType.JOINT_VEL),
                             # --- lumbar ---
                             ("dq_lumbar_extension", "lumbar_extension", ObservationType.JOINT_VEL),
                             ("dq_lumbar_bending", "lumbar_bending", ObservationType.JOINT_VEL),
@@ -179,7 +192,7 @@ class FullHumanoid(BaseHumanoid):
         actuators_to_remove = []
         equ_constr_to_remove = []
         if use_brick_foots:
-            joints_to_remove +=["subtalar_angle_l", "mtp_angle_l", "subtalar_angle_r", "mtp_angle_r"]
+            joints_to_remove += ["subtalar_angle_l", "mtp_angle_l", "subtalar_angle_r", "mtp_angle_r"]
             equ_constr_to_remove += [j + "_constraint" for j in joints_to_remove]
             # ToDo: think about a smarter way to not include foot force twice for bricks
             collision_groups = [("floor", ["floor"]),
@@ -216,32 +229,19 @@ class FullHumanoid(BaseHumanoid):
     def build_muscle_observation_spec(self, use_muscle_lens, use_muscle_vels, use_muscle_forces):
         muscle_obs_spec = []
 
-        muscles = [
-            "addbrev_r", "addlong_r", "addmagDist_r", "addmagIsch_r", "addmagMid_r", "addmagProx_r",
-            "bflh_r", "bfsh_r", "edl_r", "ehl_r", "fdl_r", "fhl_r", "gaslat_r", "gasmed_r", "glmax1_r",
-            "glmax2_r", "glmax3_r", "glmed1_r", "glmed2_r", "glmed3_r", "glmin1_r", "glmin2_r",
-            "glmin3_r", "grac_r", "iliacus_r", "perbrev_r", "perlong_r", "piri_r", "psoas_r", "recfem_r",
-            "sart_r", "semimem_r", "semiten_r", "soleus_r", "tfl_r", "tibant_r", "tibpost_r", "vasint_r",
-            "vaslat_r", "vasmed_r", "addbrev_l", "addlong_l", "addmagDist_l", "addmagIsch_l", "addmagMid_l",
-            "addmagProx_l", "bflh_l", "bfsh_l", "edl_l", "ehl_l", "fdl_l", "fhl_l", "gaslat_l", "gasmed_l",
-            "glmax1_l", "glmax2_l", "glmax3_l", "glmed1_l", "glmed2_l", "glmed3_l", "glmin1_l", "glmin2_l",
-            "glmin3_l", "grac_l", "iliacus_l", "perbrev_l", "perlong_l", "piri_l", "psoas_l", "recfem_l",
-            "sart_l", "semimem_l", "semiten_l", "soleus_l", "tfl_l", "tibant_l", "tibpost_l", "vasint_l",
-            "vaslat_l", "vasmed_l"]
-
         if use_muscle_lens:
             muscle_len_obs = []
-            for muscle in muscles:
+            for muscle in self.muscles:
                 muscle_len_obs.append(('len_' + muscle, muscle, ObservationType.MUSCLE_LEN))
             muscle_obs_spec.extend(muscle_len_obs)
         if use_muscle_vels:
             muscle_vel_obs = []
-            for muscle in muscles:
+            for muscle in self.muscles:
                 muscle_vel_obs.append(('vel_' + muscle, muscle, ObservationType.MUSCLE_VEL))
             muscle_obs_spec.extend(muscle_vel_obs)
         if use_muscle_forces:
             muscle_force_obs = []
-            for muscle in muscles:
+            for muscle in self.muscles:
                 muscle_force_obs.append(('force_' + muscle, muscle, ObservationType.MUSCLE_FORCE))
             muscle_obs_spec.extend(muscle_force_obs)
 
@@ -290,7 +290,7 @@ class FullHumanoid(BaseHumanoid):
     def save_xml_handle(self, xml_handle, tmp_dir_name):
 
         # save new model and return new xml path
-        new_model_dir_name = 'new_full_humanoid_with_bricks_model/' +  tmp_dir_name + "/"
+        new_model_dir_name = 'new_full_humanoid_with_bricks_model/' + tmp_dir_name + "/"
         cwd = Path.cwd()
         new_model_dir_path = Path.joinpath(cwd, new_model_dir_name)
         mjcf.export_with_assets(xml_handle, new_model_dir_path, self.xml_file_name)
@@ -298,27 +298,48 @@ class FullHumanoid(BaseHumanoid):
 
         return new_xml_path.as_posix()
 
-    @staticmethod
-    def has_fallen(state):
-        raise Exception("DEPRECATED AND WRONG!!!")
+    def has_fallen(self, state):
         pelvis_euler = state[1:4]
-        pelvis_condition = ((state[0] < -0.35) or (state[0] > 0.10)
-                            or (pelvis_euler[0] < (-np.pi / 4.5)) or (pelvis_euler[0] > (np.pi / 12))
-                            or (pelvis_euler[1] < -np.pi / 12) or (pelvis_euler[1] > np.pi / 8)
-                            or (pelvis_euler[2] < (-np.pi / 10)) or (pelvis_euler[2] > (np.pi / 10))
-                           )
-        lumbar_euler = state[32:35]
-        lumbar_condition = ((lumbar_euler[0] < (-np.pi / 6)) or (lumbar_euler[0] > (np.pi / 10))
-                            or (lumbar_euler[1] < -np.pi / 10) or (lumbar_euler[1] > np.pi / 10)
-                            or (lumbar_euler[2] < (-np.pi / 4.5)) or (lumbar_euler[2] > (np.pi / 4.5))
-                            )
-        return pelvis_condition or lumbar_condition
+
+        if self._use_brick_foots:
+            lumbar_euler = state[14:17]
+        else:
+            lumbar_euler = state[18:21]
+
+        if self.strict_reset_condition:
+            pelvis_condition = ((state[0] < -0.4) or (state[0] > 0.10)
+                                or (pelvis_euler[0] < (-np.pi / 4.5)) or (pelvis_euler[0] > (np.pi / 12))
+                                or (pelvis_euler[1] < -np.pi / 12) or (pelvis_euler[1] > np.pi / 8)
+                                or (pelvis_euler[2] < (-np.pi / 10)) or (pelvis_euler[2] > (np.pi / 10))
+                                )
+
+            lumbar_condition = ((lumbar_euler[0] < (-np.pi / 6)) or (lumbar_euler[0] > (np.pi / 10))
+                                or (lumbar_euler[1] < -np.pi / 10) or (lumbar_euler[1] > np.pi / 10)
+                                or (lumbar_euler[2] < (-np.pi / 4.5)) or (lumbar_euler[2] > (np.pi / 4.5))
+                                )
+            return pelvis_condition or lumbar_condition
+        else:
+            pelvis_condition = ((state[0] < -0.35) or (state[0] > 0.10)
+                                or (pelvis_euler[0] < (-np.pi / 4)) or (pelvis_euler[0] > (np.pi / 4))
+                                or (pelvis_euler[1] < -np.pi / 4) or (pelvis_euler[1] > np.pi / 4)
+                                or (pelvis_euler[2] < (-np.pi / 4)) or (pelvis_euler[2] > (np.pi / 4))
+                                )
+
+            lumbar_condition = ((lumbar_euler[0] < (-np.pi / 4)) or (lumbar_euler[0] > (np.pi / 4))
+                                or (lumbar_euler[1] < -np.pi / 4) or (lumbar_euler[1] > np.pi / 4)
+                                or (lumbar_euler[2] < (-np.pi / 4)) or (lumbar_euler[2] > (np.pi / 4))
+                                )
+            return lumbar_condition or pelvis_condition
 
 
 if __name__ == '__main__':
     import time
 
-    env = FullHumanoid(n_substeps=33, use_brick_foots=False, disable_arms=True, random_start=False, tmp_dir_name="test")
+    env = HamnerHumanoid(n_substeps=33, use_brick_foots=True, disable_arms=True, random_start=False,
+                         obs_muscle_lens=True,
+                         obs_muscle_vels=True,
+                         obs_muscle_forces=False,
+                         tmp_dir_name="test")
     print(env._n_intermediate_steps)
     print(env.get_obs_idx('q_pelvis_tilt'))
     print(env.get_obs_idx('q_hip_flexion_r'))
@@ -327,6 +348,9 @@ if __name__ == '__main__':
     print(env.get_obs_idx('dq_hip_flexion_l'))
 
     action_dim = env.info.action_space.shape[0]
+    state_dim = env.info.observation_space.shape[0]
+    print("STATE DIM:")
+    print(state_dim)
 
     env.reset()
     env.render()
@@ -340,10 +364,9 @@ if __name__ == '__main__':
     ind = 0
     while True:
         ind += 1
-        print(ind)
         psi = psi + dt * frequencies
         action = np.sin(psi)
-        #action = np.random.normal(1.0, 0.5, (action_dim,)) # compare to normal gaussian noise
+        action = np.random.normal(0.0, 0.5, (action_dim,)) # compare to normal gaussian noise
         nstate, _, absorbing, _ = env.step(action)
 
         env.render()

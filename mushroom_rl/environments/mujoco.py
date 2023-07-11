@@ -108,6 +108,10 @@ class MuJoCo(Environment):
         self.collision_groups = {}
         if collision_groups is not None:
             for name, geom_names in collision_groups:
+                mj_ids = {mujoco.mj_name2id(self._model, mujoco.mjtObj.mjOBJ_GEOM, geom_name)
+                                               for geom_name in geom_names}
+                if -1 in mj_ids:
+                    raise Exception("Invalid Collision Group!")
                 self.collision_groups[name] = {mujoco.mj_name2id(self._model, mujoco.mjtObj.mjOBJ_GEOM, geom_name)
                                                for geom_name in geom_names}
 
