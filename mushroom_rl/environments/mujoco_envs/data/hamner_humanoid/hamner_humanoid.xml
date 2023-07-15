@@ -22,7 +22,7 @@
   <worldbody>
     <geom name="floor" pos="0 0 0" size="10 10 0.125" type="plane" material="MatPlane" condim="3"></geom>
     <light cutoff="100" diffuse="1 1 1" dir="-0 0 -1.3" directional="true" exponent="1" pos="0 0 1.3" specular=".1 .1 .1" castshadow="false"/>
-    <body name="pelvis" pos="       0 6.73556e-17      0.95" quat="0.7071067811865475 0.7071067811865475 0.0 0.0">
+    <body name="pelvis" pos="       0 6.73556e-17      1.1" quat="0.7071067811865475 0.7071067811865475 0.0 0.0">
       <light mode="trackcom" directional="false" pos="0 0 4.0" dir="0 0 -1"></light>
       <geom name="sacrum" type="mesh" mesh="sacrum"></geom>
       <geom name="pelvis" type="mesh" mesh="pelvis"></geom>
@@ -158,9 +158,9 @@
         <site name="med_gas_r-P2" pos="-0.0272672 -0.365563 -0.0234498"></site>
         <site name="lat_gas_r-P1" pos="-0.019996 -0.358655 0.0247223"></site>
         <site name="lat_gas_r-P2" pos="-0.0272672 -0.365199 0.0249041"></site>
-        <joint name="hip_flexion_r" type="hinge" pos="0 0 0" axis="       0        0        1" limited="true" range=" -2.0944   2.0944" ref="0"></joint>
-        <joint name="hip_adduction_r" type="hinge" pos="0 0 0" axis="       1        0        0" limited="true" range=" -2.0944   2.0944" ref="0"></joint>
-        <joint name="hip_rotation_r" type="hinge" pos="0 0 0" axis="       0        1        0" limited="true" range=" -2.0944   2.0944" ref="0"></joint>
+        <joint name="hip_flexion_r" damping="5" stiffness="10" type="hinge" pos="0 0 0" axis="       0        0        1" limited="true" range=" -0.787   0.787" ref="0"></joint>
+        <joint name="hip_adduction_r" damping="5" stiffness="10" type="hinge" pos="0 0 0" axis="       1        0        0" limited="true" range=" -0.524   0.524" ref="0"></joint>
+        <joint name="hip_rotation_r" damping="5" stiffness="20" type="hinge" pos="0 0 0" axis="       0        1        0" limited="true" range=" -2.0944   2.0944" ref="0"></joint>
         <body name="tibia_r" pos="-0.00167398 -0.365545        0" quat="1.0 0.0 0.0 0.0">
           <geom name="tibia_r" type="mesh" mesh="tibia_r"></geom>
           <geom name="fibula_r" type="mesh" mesh="fibula_r"></geom>
@@ -211,7 +211,7 @@
           <body name="talus_r" pos="       0 -0.480173        0" quat="1.0 0.0 0.0 0.0">
             <geom name="talus_rv" type="mesh" mesh="talus_rv"></geom>
             <inertial pos="       0        0        0" mass="0.11524999800438" fullinertia="0.00143714 0.00143714 0.00143714        0        0        0"></inertial>
-            <joint name="ankle_angle_r" type="hinge" pos="0 0 0" axis="-0.105014 -0.174022 0.979126" limited="true" range=" -1.5708   1.5708" ref="0"></joint>
+            <joint name="ankle_angle_r" stiffness="10" damping="1" type="hinge" pos="0 0 0" axis="-0.105014 -0.174022 0.979126" limited="true" range=" -1.5708   1.5708" ref="0"></joint>
             <body name="calcn_r" pos="-0.0544606 -0.0468448 0.00884412" quat="1.0 0.0 0.0 0.0">
               <geom name="r_foot" type="mesh" mesh="foot"></geom>
               <inertial pos="0.106552 0.0319656        0" mass="1.44062497505475" fullinertia="0.00183186 0.00510303 0.00536472        0        0        0"></inertial>
@@ -306,9 +306,9 @@
         <site name="med_gas_l-P2" pos="-0.0272672 -0.365563 0.0234498"></site>
         <site name="lat_gas_l-P1" pos="-0.019996 -0.358655 -0.0247223"></site>
         <site name="lat_gas_l-P2" pos="-0.0272672 -0.365199 -0.0249041"></site>
-        <joint name="hip_flexion_l" type="hinge" pos="0 0 0" axis="       0        0        1" limited="true" range=" -2.0944   2.0944" ref="0"></joint>
-        <joint name="hip_adduction_l" type="hinge" pos="0 0 0" axis="      -1        0        0" limited="true" range=" -2.0944   2.0944" ref="0"></joint>
-        <joint name="hip_rotation_l" type="hinge" pos="0 0 0" axis="       0       -1        0" limited="true" range=" -2.0944   2.0944" ref="0"></joint>
+        <joint name="hip_flexion_l" damping="5" stiffness="10" type="hinge" pos="0 0 0" axis="       0        0        1" limited="true" range=" -0.787   0.787" ref="0"></joint>
+        <joint name="hip_adduction_l" damping="5" stiffness="10" type="hinge" pos="0 0 0" axis="      -1        0        0" limited="true" range=" -0.524   0.524" ref="0"></joint>
+        <joint name="hip_rotation_l" damping="5" stiffness="20" type="hinge" pos="0 0 0" axis="       0       -1        0" limited="true" range=" -2.0944   2.0944" ref="0"></joint>
         <body name="tibia_l" pos="-0.00167398 -0.365545        0" quat="1.0 0.0 0.0 0.0">
           <geom name="tibia_l" type="mesh" mesh="tibia_l"></geom>
           <geom name="fibula_l" type="mesh" mesh="fibula_l"></geom>
@@ -359,7 +359,7 @@
           <body name="talus_l" pos="       0 -0.480173        0" quat="1.0 0.0 0.0 0.0">
             <geom name="talus_lv" type="mesh" mesh="talus_lv"></geom>
             <inertial pos="       0        0        0" mass="0.11524999800438" fullinertia="0.00143714 0.00143714 0.00143714        0        0        0"></inertial>
-            <joint name="ankle_angle_l" type="hinge" pos="0 0 0" axis="0.105014 0.174022 0.979126" limited="true" range=" -1.0472   1.0472" ref="0"></joint>
+            <joint name="ankle_angle_l"  stiffness="10" damping="1" type="hinge" pos="0 0 0" axis="0.105014 0.174022 0.979126" limited="true" range=" -1.0472   1.0472" ref="0"></joint>
             <body name="calcn_l" pos="-0.0544606 -0.0468448 -0.00884412" quat="1.0 0.0 0.0 0.0">
               <geom name="l_foot" type="mesh" mesh="l_foot"></geom>
               <inertial pos="0.106552 0.0319656        0" mass="1.44062497505475" fullinertia="0.00183186 0.00510303 0.00536472        0        0        0"></inertial>
@@ -418,9 +418,9 @@
         <site name="intobl_l-P2" pos="0.0754152 0.172378 -0.0161604"></site>
         <site name="extobl_r-P2" pos="0.0700284 0.11851 0.11851"></site>
         <site name="extobl_l-P2" pos="0.0700284 0.11851 -0.11851"></site>
-        <joint name="lumbar_extension" type="hinge" pos="0 0 0" axis="       0        0        1" limited="true" range=" -1.5708   1.5708" ref="0"></joint>
-        <joint name="lumbar_bending" type="hinge" pos="0 0 0" axis="       1        0        0" limited="true" range=" -1.5708   1.5708" ref="0"></joint>
-        <joint name="lumbar_rotation" type="hinge" pos="0 0 0" axis="       0        1        0" limited="true" range=" -1.5708   1.5708" ref="0"></joint>
+        <joint name="lumbar_extension" stiffness="10" damping="5" type="hinge" pos="0 0 0" axis="       0        0        1" limited="true" range=" -1.5708   0.377" ref="0"></joint>
+        <joint name="lumbar_bending" stiffness="10" damping="5" type="hinge" pos="0 0 0" axis="       1        0        0" limited="true" range=" -0.754   0.754" ref="0"></joint>
+        <joint name="lumbar_rotation" stiffness="20" damping="5" type="hinge" pos="0 0 0" axis="       0        1        0" limited="true" range=" -0.754   0.754" ref="0"></joint>
         <body name="humerus_r" pos="0.00339907 0.400239 0.183151" quat="1.0 0.0 0.0 0.0">
           <geom name="humerus_rv" type="mesh" mesh="humerus_rv"></geom>
           <inertial pos="       0 -0.193252        0" mass="2.34245620943902" fullinertia="0.0190007 0.00655464 0.0213276        0        0        0"></inertial>
