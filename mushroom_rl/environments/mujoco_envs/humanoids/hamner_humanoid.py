@@ -324,10 +324,9 @@ class HamnerHumanoid(BaseHumanoid):
                                 or (pelvis_euler[1] < -np.pi / 4) or (pelvis_euler[1] > np.pi / 4)
                                 or (pelvis_euler[2] < (-np.pi / 4)) or (pelvis_euler[2] > (np.pi / 4))
                                 )
-
-            lumbar_condition = ((lumbar_euler[0] < (-np.pi / 4)) or (lumbar_euler[0] > (np.pi / 4))
-                                or (lumbar_euler[1] < -np.pi / 4) or (lumbar_euler[1] > np.pi / 4)
-                                or (lumbar_euler[2] < (-np.pi / 4)) or (lumbar_euler[2] > (np.pi / 4))
+            lumbar_condition = ((lumbar_euler[0] < (-np.pi / 6)) or (lumbar_euler[0] > (np.pi / 10))
+                                or (lumbar_euler[1] < -np.pi / 10) or (lumbar_euler[1] > np.pi / 10)
+                                or (lumbar_euler[2] < (-np.pi / 4.5)) or (lumbar_euler[2] > (np.pi / 4.5))
                                 )
             return lumbar_condition or pelvis_condition
 
