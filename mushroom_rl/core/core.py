@@ -2,13 +2,15 @@ from tqdm import tqdm
 
 from collections import defaultdict
 
+import time
+
 
 class Core(object):
     """
     Implements the functions to run a generic algorithm.
 
     """
-    def __init__(self, agent, mdp, callbacks_fit=None, callback_step=None):
+    def __init__(self, agent, mdp, callbacks_fit=None, callback_step=None, tb_writer=None):
         """
         Constructor.
 
@@ -22,6 +24,10 @@ class Core(object):
         """
         self.agent = agent
         self.mdp = mdp
+
+        self.tb_writer = tb_writer
+        self.fit_counter = 0
+
         self.callbacks_fit = callbacks_fit if callbacks_fit is not None else list()
         self.callback_step = callback_step if callback_step is not None else lambda x: None
 
@@ -144,7 +150,13 @@ class Core(object):
         dataset_info = defaultdict(list)
 
         last = True
+
+        start_sim_time = True
+
         while move_condition():
+            if start_sim_time:
+                sim_start = time.time()
+
             if last:
                 self.reset(initial_states)
 
@@ -167,7 +179,19 @@ class Core(object):
                 dataset_info[key].append(value)
 
             if fit_condition():
+                self.fit_counter += 1
+                if self.tb_writer is not None:
+                    self.tb_writer.add_scalar("time_in_sim", time.time() - sim_start, self.fit_counter)
+
+                fit_start = time.time()
+
                 self.agent.fit(dataset, **dataset_info)
+
+                fit_end = time.time()
+                elapsed = fit_end - fit_start
+                if self.tb_writer is not None:
+                    self.tb_writer.add_scalar("time_in_fit", elapsed, self.fit_counter)
+
                 self._current_episodes_counter = 0
                 self._current_steps_counter = 0
 
@@ -176,7 +200,9 @@ class Core(object):
 
                 dataset = list()
                 dataset_info = defaultdict(list)
-
+                start_sim_time = True
+            else:
+                start_sim_time = False
             last = sample[-1]
 
         self.agent.stop()
